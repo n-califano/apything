@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel.force-include]
+"config" = "apything/config"
+
+[project]
+name = "apything"
+version = "0.1.0"
+authors = [
+  { name="Niccolò Califano", email="niccolo.califano19@gmail.com" },
+]
+description = "A python wrapper for the AnythingLLM API"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+  "PyYAML==6.0.2",
+  "requests==2.32.3"
+]
+
+[project.urls]
+Homepage = "https://github.com/n-califano/apything"
+Issues = "https://github.com/n-califano/apything/issues"
