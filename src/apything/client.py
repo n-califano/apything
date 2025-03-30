@@ -1,10 +1,12 @@
 import requests
 import yaml
-from endpoints.document import Document
+import os.path
+from .endpoints.document import Document
 
 class APIClient:
     def __init__(self, base_url, api_key, version='v1'):
-        with open("../config/config.yml", "r") as config_file:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        with open(f"{base_path}/config/config.yml", "r") as config_file:
             self.config = yaml.safe_load(config_file)
 
         self.api_key = api_key
