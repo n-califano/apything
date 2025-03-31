@@ -1,4 +1,4 @@
-class Document:
+class Documents:
     def __init__(self, client):
         self.client = client  # Reference to APIClient
         self.endpoints = self.client.config['endpoints']['documents']
