@@ -2,6 +2,7 @@ import requests
 import yaml
 import os.path
 from .endpoints.documents import Documents
+from .endpoints.system_settings import SystemSettings
 
 class APIClient:
     def __init__(self, base_url, api_key, version='v1'):
@@ -15,7 +16,8 @@ class APIClient:
         self.session.headers.update({"Authorization": f"Bearer {api_key}"})
 
         # Initialize submodules
-        self.document = Documents(self)
+        self.documents = Documents(self)
+        self.system_settings = SystemSettings(self)
 
 
 
