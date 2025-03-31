@@ -2,3 +2,6 @@ v1: "/api/v1"
 endpoints:
   documents:
     upload: "document/upload"
+    documents: "documents"
+  system_settings:
+    remove-documents: "system/remove-documents"
