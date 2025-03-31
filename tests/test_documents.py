@@ -65,3 +65,25 @@ def test_upload_files(api_client, tmp_files):
     
     # Teardown
     api_client.system_settings.remove_documents(internal_files)
+
+def test_get_documents(api_client, tmp_files):
+    # Setup
+    tmp_files = list(tmp_files.values())
+    json = api_client.documents.upload_files(tmp_files)
+    internal_files = [item['documents'][0]['location'] for item in json]
+
+    json = api_client.documents.get_documents()
+    folder = json['localFiles']['items'][0]
+    assert folder['name'] == "custom-documents"
+    assert folder['type'] == "folder"
+    files = folder['items']
+    assert len(files) == 3
+    for i, file in enumerate(files):
+        assert file['name'].startswith(os.path.basename(tmp_files[i]))
+        assert file['type'] == "file"
+        assert file['id'] in internal_files[i]
+        assert file['title'] == os.path.basename(tmp_files[i])
+        assert file['wordCount'] == 4
+
+    # Teardown
+    api_client.system_settings.remove_documents(internal_files)
