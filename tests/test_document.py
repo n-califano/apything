@@ -26,7 +26,7 @@ def tmp_files(tmp_path):
 def test_upload_file(api_client, tmp_files):
     tmp_file = tmp_files['file1']
 
-    json = api_client.document.upload_file(tmp_file)
+    json = api_client.documents.upload_file(tmp_file)
     
     assert json['success'] is True
     assert json['error'] is None
@@ -38,9 +38,14 @@ def test_upload_file(api_client, tmp_files):
     assert document['location'].startswith('custom-documents')
     assert document['location'].endswith('json')
 
+    # Teardown
+    api_client.system_settings.remove_documents([document['location']])
+
 
 def test_upload_files(api_client, tmp_files):
-    json = api_client.document.upload_files(tmp_files.values())
+    internal_files = []     #store internal docs paths for later removal
+
+    json = api_client.documents.upload_files(tmp_files.values())
     assert len(json) == 3
     
     for i, tmp_file in enumerate(tmp_files.values()):
@@ -55,4 +60,8 @@ def test_upload_files(api_client, tmp_files):
         assert document['pageContent'] == tmp_file.read_text()
         assert document['location'].startswith('custom-documents')
         assert document['location'].endswith('json')
+
+        internal_files.append(document['location'])
     
+    # Teardown
+    api_client.system_settings.remove_documents(internal_files)
