@@ -1,7 +1,7 @@
 import requests
 import yaml
 import os.path
-from .endpoints.document import Documents
+from .endpoints.documents import Documents
 
 class APIClient:
     def __init__(self, base_url, api_key, version='v1'):
