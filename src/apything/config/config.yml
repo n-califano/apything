@@ -5,3 +5,7 @@ endpoints:
     documents: "documents"
   system_settings:
     remove-documents: "system/remove-documents"
+  workspaces:
+    update-embeddings: "workspace/{slug}/update-embeddings"
+    new: "workspace/new"
+    delete: "workspace/{slug}"
