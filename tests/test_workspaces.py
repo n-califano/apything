@@ -1,26 +1,6 @@
 import pytest
-import yaml
-import os.path
-from apything import APIClient, Workspace
+from apything import Workspace
 
-@pytest.fixture
-def api_client():
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_path, "config.yml")
-    with open(config_path, "r") as config_file:
-        config = yaml.safe_load(config_file)
-        return APIClient(config['base_url'], config['api_key'])
-    
-@pytest.fixture
-def tmp_files(tmp_path):
-    files = [
-        tmp_path / "file1.txt",
-        tmp_path / "file2.txt",
-        tmp_path / "file3.txt"
-    ]
-    for file_path in files:
-        file_path.write_text(f"Fake content for {file_path}")
-    return files
 
 # scope="session" --> runs only once for the entire test session, before running the tests
 # scope="function" --> runs before every test
