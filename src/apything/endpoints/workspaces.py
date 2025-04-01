@@ -27,9 +27,6 @@ class Workspaces:
             "adds": files_to_add,
             "deletes": files_to_remove
         }
-
-        print("****** DEBUG ******" )
-        print(files_to_add)
         
         endpoint = self.endpoints['update-embeddings'].format(slug=workspace_slug)
         update_url = f"{self.base_url}/{endpoint}"
