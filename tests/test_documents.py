@@ -2,7 +2,7 @@ import os.path
 
 
 def test_upload_file(api_client, tmp_files):
-    tmp_file = tmp_files['file1']
+    tmp_file = tmp_files[0]
 
     json = api_client.documents.upload_file(tmp_file)
     
@@ -23,10 +23,10 @@ def test_upload_file(api_client, tmp_files):
 def test_upload_files(api_client, tmp_files):
     internal_files = []     #store internal docs paths for later removal
 
-    json = api_client.documents.upload_files(tmp_files.values())
+    json = api_client.documents.upload_files(tmp_files)
     assert len(json) == 3
     
-    for i, tmp_file in enumerate(tmp_files.values()):
+    for i, tmp_file in enumerate(tmp_files):
         item = json[i]
         document = item['documents'][0]
 
@@ -46,7 +46,6 @@ def test_upload_files(api_client, tmp_files):
 
 def test_get_documents(api_client, tmp_files):
     # Setup
-    tmp_files = list(tmp_files.values())
     json = api_client.documents.upload_files(tmp_files)
     internal_files = [item['documents'][0]['location'] for item in json]
 
