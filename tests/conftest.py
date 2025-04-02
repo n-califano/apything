@@ -16,11 +16,11 @@ def api_client():
 
 @pytest.fixture
 def tmp_files(tmp_path):
-    files = {
-        "file1": tmp_path / "file1.txt",
-        "file2": tmp_path / "file2.txt",
-        "file3": tmp_path / "file3.txt"
-    }
-    for file_name, file_path in files.items():
-        file_path.write_text(f"Fake content for {file_name}")
+    files = [
+        tmp_path / "file1.txt",
+        tmp_path / "file2.txt",
+        tmp_path / "file3.txt"
+    ]
+    for file_path in files:
+        file_path.write_text(f"Fake content for {file_path}")
     return files
