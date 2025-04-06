@@ -5,9 +5,9 @@ class ApythingException(Exception):
 
 class HttpUtil:
     @staticmethod
-    def safe_request(session, url, headers, method='GET', data=None):
+    def safe_request(session, url, headers, method='GET', data=None, files=None):
         try:
-            response = session.request(method, url, json=data, headers=headers)
+            response = session.request(method, url, json=data, headers=headers, files=files)
         except RequestException as e:
             # Handle network or HTTP request errors
             raise ApythingException("Error: request failed") from e
