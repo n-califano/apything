@@ -1,3 +1,5 @@
+from ..util.http_util import HttpUtil
+
 class SystemSettings:
     def __init__(self, client):
         self.client = client  # Reference to APIClient
@@ -13,6 +15,6 @@ class SystemSettings:
             "names": file_paths
         }
         remove_url = f"{self.base_url}/{self.endpoints['remove-documents']}"
-        response = self.session.delete(remove_url, headers=self.headers, json=files_to_remove)
+        json_data = HttpUtil.safe_request(self.session, remove_url, self.headers, method='DELETE', data=files_to_remove)
 
-        return response.json()
+        return json_data['success'] is True
