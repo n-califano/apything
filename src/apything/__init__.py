@@ -1,2 +1,2 @@
 from .client import APIClient
-from .endpoints.workspaces import Workspace
+from .models.workspaces_model import WorkspaceRequest
