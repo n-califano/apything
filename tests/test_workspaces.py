@@ -19,8 +19,8 @@ def test_workspace(api_client):
 
 def test_update_embeddings(api_client, tmp_files, test_workspace):
     # Setup
-    json_data = api_client.documents.upload_files(tmp_files)
-    internal_files = [item['documents'][0]['location'] for item in json_data]
+    _, _, files = api_client.documents.upload_files(tmp_files)
+    internal_files = [file.location for file in files]
     
     # Embed file1 and file2
     json_data = api_client.workspaces.update_embeddings(test_workspace, internal_files[:-1])

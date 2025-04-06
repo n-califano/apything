@@ -4,63 +4,72 @@ import os.path
 def test_upload_file(api_client, tmp_files):
     tmp_file = tmp_files[0]
 
-    json = api_client.documents.upload_file(tmp_file)
+    success, error, doc = api_client.documents.upload_file(tmp_file)
     
-    assert json['success'] is True
-    assert json['error'] is None
-    assert len(json['documents']) == 1
-    document = json['documents'][0]
-    assert document['title'] == os.path.basename(tmp_file)
-    assert document['wordCount'] == 4
-    assert document['pageContent'] == tmp_file.read_text()
-    assert document['location'].startswith('custom-documents')
-    assert document['location'].endswith('json')
+    assert success is True
+    assert error is None
+    assert doc.title == os.path.basename(tmp_file)
+    assert doc.wordCount == 4
+    assert doc.pageContent == tmp_file.read_text()
+    assert doc.location.startswith('custom-documents')
+    assert doc.location.endswith('json')
+    assert doc.folder == 'custom-documents'
+    assert doc.file_type == 'file'
+    assert doc.cached is False
+    assert doc.canWatch is False
+    assert doc.watched is False
+    assert doc.pinnedWorkspaces == []
 
     # Teardown
-    api_client.system_settings.remove_documents([document['location']])
+    api_client.system_settings.remove_documents([doc.location])
 
 
 def test_upload_files(api_client, tmp_files):
     internal_files = []     #store internal docs paths for later removal
 
-    json = api_client.documents.upload_files(tmp_files)
-    assert len(json) == 3
-    
+    success, errors, docs = api_client.documents.upload_files(tmp_files)
+    assert len(docs) == 3
+    assert success is True
+    assert errors == []
+
     for i, tmp_file in enumerate(tmp_files):
-        item = json[i]
-        document = item['documents'][0]
+        doc = docs[i]
 
-        assert item['success'] is True
-        assert item['error'] is None
-        assert len(item['documents']) == 1
-        assert document['title'] == os.path.basename(tmp_file)
-        assert document['wordCount'] == 4
-        assert document['pageContent'] == tmp_file.read_text()
-        assert document['location'].startswith('custom-documents')
-        assert document['location'].endswith('json')
+        assert doc.title == os.path.basename(tmp_file)
+        assert doc.wordCount == 4
+        assert doc.pageContent == tmp_file.read_text()
+        assert doc.location.startswith('custom-documents')
+        assert doc.location.endswith('json')
+        assert doc.folder == 'custom-documents'
+        assert doc.file_type == 'file'
+        assert doc.cached is False
+        assert doc.canWatch is False
+        assert doc.watched is False
+        assert doc.pinnedWorkspaces == []
 
-        internal_files.append(document['location'])
+        internal_files.append(doc.location)
     
     # Teardown
     api_client.system_settings.remove_documents(internal_files)
 
 def test_get_documents(api_client, tmp_files):
     # Setup
-    json = api_client.documents.upload_files(tmp_files)
-    internal_files = [item['documents'][0]['location'] for item in json]
+    _, _, files = api_client.documents.upload_files(tmp_files)
+    internal_files = [file.location for file in files]
 
-    json = api_client.documents.get_documents()
-    folder = json['localFiles']['items'][0]
-    assert folder['name'] == "custom-documents"
-    assert folder['type'] == "folder"
-    files = folder['items']
-    assert len(files) == 3
-    for i, file in enumerate(files):
-        assert file['name'].startswith(os.path.basename(tmp_files[i]))
-        assert file['type'] == "file"
-        assert file['id'] in internal_files[i]
-        assert file['title'] == os.path.basename(tmp_files[i])
-        assert file['wordCount'] == 4
+    docs = api_client.documents.get_documents()
+    assert len(docs) == 3
+    for i, doc in enumerate(docs):
+        assert doc.folder == "custom-documents"
+        assert doc.name.startswith(os.path.basename(tmp_files[i]))
+        assert doc.file_type == "file"
+        assert doc.id in internal_files[i]
+        assert doc.title == os.path.basename(tmp_files[i])
+        assert doc.wordCount == 4
+        assert doc.cached is False
+        assert doc.canWatch is False
+        assert doc.watched is False
+        assert doc.pinnedWorkspaces == []
 
     # Teardown
     api_client.system_settings.remove_documents(internal_files)
