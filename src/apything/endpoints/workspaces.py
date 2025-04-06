@@ -1,16 +1,6 @@
-from dataclasses import dataclass, asdict
-
-
-@dataclass
-class Workspace:
-    name: str
-    similarityThreshold: float
-    openAiTemp: float
-    openAiHistory: int
-    openAiPrompt: str
-    queryRefusalResponse: str
-    chatMode: str
-    topN: int
+from dataclasses import asdict
+from ..util.http_util import HttpUtil
+from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest
 
 
 class Workspaces:
@@ -30,24 +20,23 @@ class Workspaces:
         
         endpoint = self.endpoints['update-embeddings'].format(slug=workspace_slug)
         update_url = f"{self.base_url}/{endpoint}"
-        response = self.session.post(update_url, headers=self.headers, json=files_to_embed)
+        json_data = HttpUtil.safe_request(self.session, update_url, self.headers, method='POST', data=files_to_embed)
 
-        return response.json()
+        return json_data['workspace'] is not None
     
 
-    def create_workspace(self, new_workspace: Workspace):
+    def create_workspace(self, new_workspace: WorkspaceRequest):
         json_payload = asdict(new_workspace)
-
         create_url = f"{self.base_url}/{self.endpoints['new']}"
-        response = self.session.post(create_url, headers=self.headers, json=json_payload)
+        json_data = HttpUtil.safe_request(self.session, create_url, self.headers, method='POST', data=json_payload)
 
-        return response.json()
+        return WorkspaceResponse.from_json(json_data['workspace'])
     
 
     def delete_workspace(self, workspace_slug):
         endpoint = self.endpoints['delete'].format(slug=workspace_slug)
         delete_url = f"{self.base_url}/{endpoint}"
-        response = self.session.delete(delete_url, headers=self.headers)
+        is_success = HttpUtil.safe_request(self.session, delete_url, self.headers, method='DELETE')
 
-        return response.ok
+        return is_success
 
