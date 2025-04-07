@@ -37,3 +37,16 @@ class Admin:
         json_data = HttpUtil.safe_request(self.session, delete_url, self.headers, method='DELETE')
 
         return json_data['success'] is True and json_data['error'] is None
+    
+
+    def assign_workspace_to_users(self, workspace_slug: int, user_ids: list, reset: bool = False):
+        users = {
+            "userIds": user_ids,
+            "reset": reset
+        }
+
+        endpoint = self.endpoints['manage-users'].format(workspaceSlug=workspace_slug)
+        assign_url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, assign_url, self.headers, method='POST', data=users)
+
+        return json_data['success'] is True and json_data['error'] is None
