@@ -1,6 +1,8 @@
 v1: "/api/v1"
 endpoints:
   admin:
+    delete: "admin/users/{id}"
+    new: "admin/users/new"
     users: "admin/users"
   documents:
     documents: "documents"
