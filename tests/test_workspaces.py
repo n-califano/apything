@@ -1,18 +1,4 @@
-import pytest
 from apything import WorkspaceRequest
-
-# scope="session" --> runs only once for the entire test session, before running the tests
-# scope="function" --> runs before every test
-# autouse=True --> runs automatically without needing to be explicitly used in tests
-@pytest.fixture
-def test_workspace(api_client):
-    # Setup
-    ws_name = "test_workspace"
-    ws = WorkspaceRequest(ws_name, 0.7, 0.7, 20, "Custom prompt", "Custom refusal", "chat", 4)
-    api_client.workspaces.create_workspace(ws)
-    yield ws_name
-    # Teardown
-    api_client.workspaces.delete_workspace(ws_name)
 
 
 def test_update_embeddings(api_client, tmp_files, test_workspace):
@@ -21,11 +7,11 @@ def test_update_embeddings(api_client, tmp_files, test_workspace):
     internal_files = [file.location for file in files]
     
     # Embed file1 and file2
-    is_success = api_client.workspaces.update_embeddings(test_workspace, internal_files[:-1])
+    is_success = api_client.workspaces.update_embeddings(test_workspace.slug, internal_files[:-1])
     assert is_success is True
     
     # Remove file1 and file2, embed file3
-    is_success = api_client.workspaces.update_embeddings(test_workspace, [internal_files[2]], internal_files[:-1])
+    is_success = api_client.workspaces.update_embeddings(test_workspace.slug, [internal_files[2]], internal_files[:-1])
     assert is_success is True
 
     # Teardown
