@@ -39,7 +39,7 @@ class Admin:
         return json_data['success'] is True and json_data['error'] is None
     
 
-    def assign_workspace_to_users(self, workspace_slug: int, user_ids: list, reset: bool = False):
+    def assign_workspace_to_users(self, workspace_slug: int, user_ids: list, reset: bool = False) -> bool:
         users = {
             "userIds": user_ids,
             "reset": reset
@@ -50,3 +50,11 @@ class Admin:
         json_data = HttpUtil.safe_request(self.session, assign_url, self.headers, method='POST', data=users)
 
         return json_data['success'] is True and json_data['error'] is None
+    
+
+    def get_allowed_users_for_workspace(self, workspace_id: str) -> list:
+        endpoint = self.endpoints['ws-users'].format(workspaceId=workspace_id)
+        ws_users_url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, ws_users_url, self.headers, method='GET')
+
+        return [(user['userId'], user['role']) for user in json_data['users']]
