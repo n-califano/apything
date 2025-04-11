@@ -1,5 +1,5 @@
 from ..models.admin_model import User
-from ..util.http_util import HttpUtil
+from ..util.http_util import HttpUtil, ApythingRequestException
 
 
 class Admin:
@@ -36,6 +36,9 @@ class Admin:
         delete_url = f"{self.base_url}/{endpoint}"
         json_data = HttpUtil.safe_request(self.session, delete_url, self.headers, method='DELETE')
 
+        if(not json_data['success']):
+            raise ApythingRequestException(f"Error: {json_data['error']}")
+
         return json_data['success'] is True and json_data['error'] is None
     
 
@@ -49,6 +52,9 @@ class Admin:
         assign_url = f"{self.base_url}/{endpoint}"
         json_data = HttpUtil.safe_request(self.session, assign_url, self.headers, method='POST', data=users)
 
+        if(not json_data['success']):
+            raise ApythingRequestException(f"Error: {json_data['error']}")
+
         return json_data['success'] is True and json_data['error'] is None
     
 
@@ -58,3 +64,23 @@ class Admin:
         json_data = HttpUtil.safe_request(self.session, ws_users_url, self.headers, method='GET')
 
         return [(user['userId'], user['role']) for user in json_data['users']]
+    
+
+    def update_user(self, user_id: int, new_username: str=None, new_password: str=None, new_role: str=None, is_suspended: bool=None) -> bool:
+        updated_values = {
+            key: value for key, value in {
+                "username": new_username,
+                "password": new_password,
+                "role": new_role,
+                "suspended": 1 if is_suspended else 0
+            }.items() if value is not None
+        }
+
+        endpoint = self.endpoints['update'].format(id=user_id)
+        update_url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, update_url, self.headers, method='POST', data=updated_values)
+
+        if(not json_data['success']):
+            raise ApythingRequestException(f"Error: {json_data['error']}")
+
+        return json_data['success'] is True and json_data['error'] is None
