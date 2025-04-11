@@ -1,4 +1,5 @@
 import pytest
+from apything import ApythingRequestException
 
 
 @pytest.fixture
@@ -113,3 +114,35 @@ def test_get_allowed_users_for_workspace(api_client, test_workspace, test_user, 
     assert (id, role) in allowed_users
     assert (id2, role2) in allowed_users
     assert (id3, role3) in allowed_users
+
+
+def test_update_user_with_all_params(api_client, test_user):
+    _, _, user_id = test_user
+
+    is_success = api_client.admin.update_user(user_id=user_id, new_username="updated_username", new_password='new password', new_role='admin', is_suspended=True)
+
+    users = api_client.admin.get_users()
+
+    assert is_success is True
+    assert any(user.username == "updated_username" and user.role == 'admin' and user.suspended == 1 for user in users)
+
+
+def test_update_user_with_some_params(api_client, test_user):
+    username, role, user_id = test_user
+
+    is_success = api_client.admin.update_user(user_id=user_id, new_password='new password', is_suspended=False)
+
+    users = api_client.admin.get_users()
+
+    assert is_success is True
+    assert any(user.username == username and user.role == role and user.suspended == 0 for user in users)
+
+
+def test_update_user_raise_exception_with_username_with_spaces(api_client, test_user):
+    _, _, user_id = test_user
+
+    with pytest.raises(ApythingRequestException) as ex:
+        api_client.admin.update_user(user_id=user_id, new_username="updated username", new_password='new password', new_role='admin', is_suspended=True)
+
+    exception_msg = "Error: Username must only contain lowercase letters, numbers, underscores, and hyphens with no spaces"
+    assert exception_msg in str(ex.value)    
