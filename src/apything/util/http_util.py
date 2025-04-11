@@ -1,6 +1,6 @@
 from requests.exceptions import RequestException
 
-class ApythingException(Exception):
+class ApythingRequestException(Exception):
     pass
 
 class HttpUtil:
@@ -10,7 +10,7 @@ class HttpUtil:
             response = session.request(method, url, json=data, headers=headers, files=files)
         except RequestException as e:
             # Handle network or HTTP request errors
-            raise ApythingException("Error: request failed") from e
+            raise ApythingRequestException("Error: request failed") from e
         
         if response.ok:
             try:
@@ -19,4 +19,4 @@ class HttpUtil:
                 # Some endpoints do not return any json data, only HTTP codes
                 return response.ok
         else:
-            raise ApythingException(f"Error: request returned {response.status_code} code\nResponse: {response.text}")
+            raise ApythingRequestException(f"Error: request returned {response.status_code} code\nResponse: {response.text}")
