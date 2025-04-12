@@ -1,5 +1,5 @@
 from ..models.documents_model import Document
-from ..util.http_util import HttpUtil
+from ..util.http_util import HttpUtil, ApythingRequestException
 
 class Documents:
     def __init__(self, client):
@@ -50,3 +50,17 @@ class Documents:
         json_data = HttpUtil.safe_request(self.session, get_doc_url, self.headers, method='GET')
         
         return Document.from_json(json_data['document'])
+
+
+    def create_folder(self, name: str) -> bool:
+        new_folder = {
+            'name' : name
+        }
+
+        url = f"{self.base_url}/{self.endpoints['create-folder']}"
+        json_data = HttpUtil.safe_request(self.session, url, self.headers, method='POST', data=new_folder)
+
+        if(not json_data['success']):
+            raise ApythingRequestException(f"Error: {json_data['message']}")
+
+        return json_data['success'] is True and json_data['message'] is None
