@@ -33,10 +33,20 @@ class Documents:
 
         return all_success, errors, docs
     
-    def get_documents(self):
+    def get_documents(self) -> list:
         docs_url = f"{self.base_url}/{self.endpoints['documents']}"
         json_data = HttpUtil.safe_request(self.session, docs_url, self.headers, method='GET')
         folders = json_data['localFiles']['items']
         docs = [Document.from_json(docItem, folder['name']) for folder in folders for docItem in folder['items']]
         
         return docs
+    
+
+    # WARNING: anythingLLM for this endpoint does not return information about the doc's folder, so 
+    # doc.folder == "" in the doc object returned by this method
+    def get_doc_by_name(self, doc_name: str) -> Document:
+        endpoint = self.endpoints['document'].format(docName=doc_name)
+        get_doc_url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, get_doc_url, self.headers, method='GET')
+        
+        return Document.from_json(json_data['document'])
