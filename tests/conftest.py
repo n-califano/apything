@@ -27,6 +27,16 @@ def tmp_files(tmp_path):
     return files
 
 
+@pytest.fixture
+def tmp_uploaded_files(api_client, tmp_files):
+    _, _, docs = api_client.documents.upload_files(tmp_files)
+    internal_files = [doc.location for doc in docs]
+
+    yield docs
+
+    api_client.system_settings.remove_documents(internal_files)
+
+
 # scope="session" --> runs only once for the entire test session, before running the tests
 # scope="function" --> runs before every test
 # autouse=True --> runs automatically without needing to be explicitly used in tests
