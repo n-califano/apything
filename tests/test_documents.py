@@ -1,4 +1,6 @@
 import os.path
+import pytest
+from apything import ApythingRequestException
 
 
 def test_upload_file(api_client, tmp_files):
@@ -52,6 +54,7 @@ def test_upload_files(api_client, tmp_files):
     # Teardown
     api_client.system_settings.remove_documents(internal_files)
 
+
 def test_get_documents(api_client, tmp_files):
     # Setup
     _, _, files = api_client.documents.upload_files(tmp_files)
@@ -73,3 +76,24 @@ def test_get_documents(api_client, tmp_files):
 
     # Teardown
     api_client.system_settings.remove_documents(internal_files)
+
+
+def test_get_doc_by_name_success(api_client, tmp_uploaded_files):
+    for file in tmp_uploaded_files:
+        doc = api_client.documents.get_doc_by_name(file.name)
+
+        assert doc.name == file.name
+        assert doc.file_type == 'file'
+        assert doc.id == file.id
+        assert doc.url == file.url
+        assert doc.title == file.title
+        assert doc.docAuthor == file.docAuthor
+        assert doc.description == file.description
+
+
+def test_get_doc_by_name_non_existent_doc_name_failure(api_client):
+    with pytest.raises(ApythingRequestException) as ex:
+        api_client.documents.get_doc_by_name("non existent doc name")
+
+    expected_exception_msg = 'Error: request returned 404 code\nResponse: Not Found'
+    assert expected_exception_msg in str(ex.value)    
