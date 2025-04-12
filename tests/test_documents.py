@@ -97,3 +97,20 @@ def test_get_doc_by_name_non_existent_doc_name_failure(api_client):
 
     expected_exception_msg = 'Error: request returned 404 code\nResponse: Not Found'
     assert expected_exception_msg in str(ex.value)    
+
+
+#def test_create_folder_success(api_client):
+    #is_success = api_client.documents.create_folder("new folder")
+
+    #assert is_success is True
+
+    # Teardown
+    # TODO: Currently there is no endpoint to remove a folder so teardown is not possible.
+    # To avoid leaving test data leftovers in the anythingLLM instance, we postpone the implementation
+    # of this test to when such endpoint will be available
+
+
+#def test_create_folder_already_exist_failure(api_client):
+    # TODO: Currently there is no endpoint to remove a folder so teardown is not possible.
+    # To avoid leaving test data leftovers in the anythingLLM instance, we postpone the implementation
+    # of this test to when such endpoint will be available
