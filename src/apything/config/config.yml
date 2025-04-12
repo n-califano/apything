@@ -8,6 +8,7 @@ endpoints:
     users: "admin/users"
     ws-users: "admin/workspaces/{workspaceId}/users"
   documents:
+    document: "document/{docName}"
     documents: "documents"
     upload: "document/upload"
   system_settings:
