@@ -15,6 +15,7 @@ endpoints:
   system_settings:
     remove-documents: "system/remove-documents"
   workspaces:
+    chat: "workspace/{slug}/chat"
     delete: "workspace/{slug}"
     new: "workspace/new"
     update-embeddings: "workspace/{slug}/update-embeddings"
