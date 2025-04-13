@@ -1,6 +1,6 @@
 from dataclasses import asdict
 from ..util.http_util import HttpUtil
-from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest
+from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest, ChatRequest, ChatResponse
 
 
 class Workspaces:
@@ -22,6 +22,9 @@ class Workspaces:
         update_url = f"{self.base_url}/{endpoint}"
         json_data = HttpUtil.safe_request(self.session, update_url, self.headers, method='POST', data=files_to_embed)
 
+        #TODO: a more thorough check is needed: the endpoint return the workspace json obj even if the embed request
+        #failed. Need to explicitly check that the required files have been removed/added checking the
+        # json_data['workspace']['documents'] array
         return json_data['workspace'] is not None
     
 
@@ -39,4 +42,25 @@ class Workspaces:
         is_success = HttpUtil.safe_request(self.session, delete_url, self.headers, method='DELETE')
 
         return is_success
+    
+
+    def chat_with_workspace(self, workspace_slug: str, request: ChatRequest) -> ChatResponse:
+        json_payload = {
+            "message": request.message,
+            "mode": request.mode,
+            "sessionId": request.sessionId,
+            "attachments": [
+                {
+                "name": attachment.name,
+                "mime": attachment.mime,
+                "contentString": attachment.contentString
+                } for attachment in request.attachments
+            ] 
+        }
+
+        endpoint = self.endpoints['chat'].format(slug=workspace_slug)
+        url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, url, self.headers, method='POST', data=json_payload)
+
+        return ChatResponse.from_json(json_data)
 
