@@ -19,4 +19,9 @@ class HttpUtil:
                 # Some endpoints do not return any json data, only HTTP codes
                 return response.ok
         else:
-            raise ApythingRequestException(f"Error: request returned {response.status_code} code\nResponse: {response.text}")
+            try:
+                error_msg = response.json().get('error', response.text)
+            except ValueError:
+                error_msg = response.text
+            finally:
+                raise ApythingRequestException(f"Error {response.status_code}: {error_msg}")
