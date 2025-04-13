@@ -95,7 +95,7 @@ def test_get_doc_by_name_non_existent_doc_name_failure(api_client):
     with pytest.raises(ApythingRequestException) as ex:
         api_client.documents.get_doc_by_name("non existent doc name")
 
-    expected_exception_msg = 'Error: request returned 404 code\nResponse: Not Found'
+    expected_exception_msg = 'Error 404: Not Found'
     assert expected_exception_msg in str(ex.value)    
 
 
