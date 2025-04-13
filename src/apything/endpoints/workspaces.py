@@ -21,11 +21,10 @@ class Workspaces:
         endpoint = self.endpoints['update-embeddings'].format(slug=workspace_slug)
         update_url = f"{self.base_url}/{endpoint}"
         json_data = HttpUtil.safe_request(self.session, update_url, self.headers, method='POST', data=files_to_embed)
+        embedded_docs_paths = [doc['docpath'] for doc in json_data['workspace']['documents']]
 
-        #TODO: a more thorough check is needed: the endpoint return the workspace json obj even if the embed request
-        #failed. Need to explicitly check that the required files have been removed/added checking the
-        # json_data['workspace']['documents'] array
-        return json_data['workspace'] is not None
+        return (all(file in embedded_docs_paths for file in files_to_add) and
+                all(file not in embedded_docs_paths for file in files_to_remove))
     
 
     def create_workspace(self, new_workspace: WorkspaceRequest):
