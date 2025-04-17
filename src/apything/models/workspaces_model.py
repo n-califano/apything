@@ -1,21 +1,23 @@
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional
 
-
+# Note: decided to duplicate the attributes present in both request and response class. Inheritance caused
+# trouble because non default argument need to be before default arguments otherwise you get:  
+# TypeError: non-default argument 'id' follows default argument 
 @dataclass
 class WorkspaceRequest:
     name: str
-    openAiTemp: float 
-    openAiHistory: int 
-    openAiPrompt: str
-    similarityThreshold: float 
-    topN: int
     chatMode: str
-    queryRefusalResponse: str
+    openAiTemp: float = 0.7
+    openAiHistory: int = 20
+    openAiPrompt: str = 'You are a helpful assistant.'
+    similarityThreshold: float = 0.25
+    topN: int = 4
+    queryRefusalResponse: str = 'There is no relevant information in this workspace to answer your query.'
 
 
 @dataclass
-class WorkspaceResponse(WorkspaceRequest):
+class WorkspaceResponse:
     id: int
     slug: str
     createdAt: str
@@ -27,6 +29,14 @@ class WorkspaceResponse(WorkspaceRequest):
     agentProvider: str
     agentModel: str
     vectorSearchMode: str
+    name: str
+    chatMode: str
+    openAiTemp: float = 0.7
+    openAiHistory: int = 20
+    openAiPrompt: str = 'You are a helpful assistant.'
+    similarityThreshold: float = 0.25
+    topN: int = 4
+    queryRefusalResponse: str = 'There is no relevant information in this workspace to answer your query.'
 
     @classmethod
     def from_json(cls, json_data: dict):

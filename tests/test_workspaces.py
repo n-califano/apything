@@ -46,6 +46,18 @@ def test_create_workspace(api_client):
     api_client.workspaces.delete_workspace(workspace.slug)
 
 
+def test_create_workspace_only_name_and_mode(api_client):
+    ws = WorkspaceRequest(name="test create workspace", chatMode="query")
+    workspace = api_client.workspaces.create_workspace(ws)
+
+    assert workspace.name == "test create workspace"
+    assert workspace.slug == "test-create-workspace"
+    assert workspace.chatMode == "query"
+
+    # Teardown
+    api_client.workspaces.delete_workspace(workspace.slug)
+
+
 def test_delete_workspace(api_client):
     # Setup
     ws = WorkspaceRequest("test delete workspace", 0.7, 0.7, 20, "Custom prompt", "Custom refusal", "chat", 4)
