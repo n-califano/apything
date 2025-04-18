@@ -1,6 +1,6 @@
 from dataclasses import asdict
 from ..util.http_util import HttpUtil
-from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest, ChatRequest, ChatResponse
+from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest, ChatRequest, ChatResponse, Workspace
 
 
 class Workspaces:
@@ -41,6 +41,14 @@ class Workspaces:
         is_success = HttpUtil.safe_request(self.session, delete_url, self.headers, method='DELETE')
 
         return is_success
+    
+
+    def get_workspace(self, workspace_slug):
+        endpoint = self.endpoints['get'].format(slug=workspace_slug)
+        url = f"{self.base_url}/{endpoint}"
+        json_data = HttpUtil.safe_request(self.session, url, self.headers, method='GET')
+
+        return Workspace.from_json(json_data['workspace'][0])
     
 
     def chat_with_workspace(self, workspace_slug: str, request: ChatRequest) -> ChatResponse:
