@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Literal, Optional
+import json
 
 # Note: decided to duplicate the attributes present in both request and response class. Inheritance caused
 # trouble because non default argument need to be before default arguments otherwise you get:  
@@ -41,6 +42,60 @@ class WorkspaceResponse:
     @classmethod
     def from_json(cls, json_data: dict):
         return cls(**json_data)
+    
+
+@dataclass
+class WorkspaceDocument():
+    id: int
+    docId: str
+    filename: str
+    docpath: str
+    workspaceId: int
+    metadata: 'WorkspaceDocument.Metadata'
+    pinned: bool
+    watched: bool
+    createdAt: str
+    lastUpdatedAt: str
+
+    @classmethod
+    def from_json(cls, json_data: dict):
+        metadata = json.loads(json_data.pop("metadata", {}))
+        return cls(
+            metadata=cls.Metadata.from_json(metadata),
+            **json_data)
+    
+    @dataclass
+    class Metadata:
+        id: str
+        url: str
+        title: str
+        docAuthor: str
+        description: str
+        docSource: str
+        chunkSource: str
+        published: str
+        wordCount: int
+        token_count_estimate: int
+
+        @classmethod
+        def from_json(cls, json_data: dict):
+            return cls(**json_data)
+
+
+@dataclass
+class Workspace(WorkspaceResponse):
+    documents: List[WorkspaceDocument] = field(default_factory=list)
+    threads: List = field(default_factory=list)
+
+    @classmethod
+    def from_json(cls, json_data: dict):
+        documents_data = json_data.pop("documents", [])
+        threads_data = json_data.pop("threads", [])
+        return cls(
+            documents=[WorkspaceDocument.from_json(d) for d in documents_data],
+            threads=threads_data,
+            **json_data
+        )
     
 
 @dataclass
