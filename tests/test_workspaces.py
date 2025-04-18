@@ -133,3 +133,20 @@ def test_chat_with_workspace_unsupported_mode_failure(api_client, random_session
 
     expected_exception_msg = 'Error 400: unsupported-mode is not a valid mode.'
     assert expected_exception_msg in str(ex.value)
+
+
+def test_get_workspace(api_client, test_workspace, tmp_embedded_files):
+    ws = api_client.workspaces.get_workspace(test_workspace.slug)
+
+    assert ws.slug == 'test_workspace'
+    assert ws.name == 'test_workspace'
+    assert ws.chatMode == 'chat'
+    assert len(ws.documents) == 3
+    for i, doc in enumerate(ws.documents):
+        assert doc.metadata.title == tmp_embedded_files[i].title
+        assert doc.filename == tmp_embedded_files[i].name
+        assert doc.docpath == tmp_embedded_files[i].location
+        assert doc.metadata.id == tmp_embedded_files[i].id
+        assert doc.metadata.url == tmp_embedded_files[i].url
+        assert doc.metadata.wordCount == tmp_embedded_files[i].wordCount
+        assert doc.metadata.token_count_estimate == tmp_embedded_files[i].token_count_estimate
