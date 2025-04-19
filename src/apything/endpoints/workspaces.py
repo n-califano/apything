@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import Optional
 from ..util.http_util import HttpUtil
 from ..models.workspaces_model import WorkspaceResponse, WorkspaceRequest, ChatRequest, ChatResponse, Workspace
 
@@ -43,10 +44,14 @@ class Workspaces:
         return is_success
     
 
-    def get_workspace(self, workspace_slug):
+    def get_workspace(self, workspace_slug: str) -> Optional[Workspace]:
         endpoint = self.endpoints['get'].format(slug=workspace_slug)
         url = f"{self.base_url}/{endpoint}"
         json_data = HttpUtil.safe_request(self.session, url, self.headers, method='GET')
+
+        if json_data['workspace'] == []:
+            print(f'Workspace {workspace_slug} not found.')
+            return None
 
         return Workspace.from_json(json_data['workspace'][0])
     
