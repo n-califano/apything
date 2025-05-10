@@ -62,4 +62,17 @@ def test_chat_session_image_attach(api_client):
     chat.cleanup(True, True)
 
     assert "Mean Squared Error" or "MSE" in response
+
+
+def test_add_and_remove_attachment(api_client):
+    chat = ChatSession(mode='chat', api_client=api_client)
+
+    chat.add_attachment(name="equation.png", mime="image/png", content='fake content')
+
+    assert len(chat.attachments) == 1
+    assert chat.attachments[0].name == 'equation.png'
+
+    chat.remove_attachment(name='equation.png')
+
+    assert len(chat.attachments) == 0
     

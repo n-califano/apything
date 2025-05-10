@@ -37,6 +37,10 @@ class ChatSession:
     
     def add_attachment(self, name: str, mime: str, content: str):
         self.attachments.append(Attachment(name=name, mime=mime, contentString=content))
+
+
+    def remove_attachment(self, name: str):
+        self.attachments = [attach for attach in self.attachments if attach.name != name]
     
 
     def embed(self, files_to_add: List[str] = [], files_to_remove: List[str] = []) -> bool:
