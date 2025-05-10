@@ -30,9 +30,13 @@ class ChatSession:
     
 
     def send(self, message: str) -> str:
-        request = ChatRequest(message=message, mode=self.mode, sessionId=self.session_id)
+        request = ChatRequest(message=message, mode=self.mode, sessionId=self.session_id, attachments=self.attachments)
         response = self.api_client.workspaces.chat_with_workspace(workspace_slug=self.workspace_slug, request=request)
         return response.textResponse
+
+    
+    def add_attachment(self, name: str, mime: str, content: str):
+        self.attachments.append(Attachment(name=name, mime=mime, contentString=content))
     
 
     def embed(self, files_to_add: List[str] = [], files_to_remove: List[str] = []) -> bool:

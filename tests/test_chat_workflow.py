@@ -48,3 +48,18 @@ def test_chat_session_embed(api_client, tmp_files):
 
     assert len(docs) == 0
     assert workspace is None
+
+
+def test_chat_session_image_attach(api_client):
+    chat = ChatSession(mode='chat', api_client=api_client)
+
+    with open("assets/equation.b64", 'r') as file:
+        base64_uri = file.read()
+        chat.add_attachment(name="equation.png", mime="image/png", content=base64_uri)
+
+    response = chat.send("What is in the attached image?")
+
+    chat.cleanup(True, True)
+
+    assert "Mean Squared Error" or "MSE" in response
+    
