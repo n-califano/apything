@@ -58,17 +58,17 @@ class ChatSession:
         remove_paths = [doc.location for doc in docs_to_remove]
         add_paths = [doc.location for doc in docs_to_add]
 
-        is_success = self.api_client.workspaces.update_embeddings(
+        is_embed_success = self.api_client.workspaces.update_embeddings(
             self.workspace_slug, files_to_add=add_paths, files_to_remove=remove_paths)
-        if not is_success:
+        if not is_embed_success:
             print("WARNING: embedding failed.")
 
-        is_success = self.api_client.system_settings.remove_documents(remove_paths)
-        if not is_success:
+        is_rm_success = self.api_client.system_settings.remove_documents(remove_paths)
+        if not is_rm_success:
             print('WARNING: failed to remove files')
         self._current_uploaded_docs = [doc for doc in self._current_uploaded_docs if doc not in docs_to_remove]
 
-        return is_success
+        return all_success and is_embed_success and is_rm_success
     
 
     def cleanup(self, rm_workspace: bool, rm_uploaded_files: bool):
