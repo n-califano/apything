@@ -15,7 +15,9 @@ endpoints:
   embed:
     embed: "embed"
   system_settings:
+    get-env: "system"
     remove-documents: "system/remove-documents"
+    update-env: "system/update-env"
   workspaces:
     chat: "workspace/{slug}/chat"
     delete: "workspace/{slug}"

@@ -1,4 +1,5 @@
 from ..util.http_util import HttpUtil
+from typing import Dict
 
 class SystemSettings:
     def __init__(self, client):
@@ -18,3 +19,22 @@ class SystemSettings:
         json_data = HttpUtil.safe_request(self.session, remove_url, self.headers, method='DELETE', data=files_to_remove)
 
         return json_data['success'] is True
+    
+
+    def update_env(self, settings: Dict[str, str]) -> bool:
+        url = f"{self.base_url}/{self.endpoints['update-env']}"
+        json_data = HttpUtil.safe_request(self.session, url, self.headers, method='POST', data=settings)
+
+        return all(item in json_data['newValues'] for item in settings.keys())
+        
+
+    def update_setting(self, key: str, value: str) -> bool:
+        return self.update_env({key: value})
+
+
+    def get_env(self):
+        url = f"{self.base_url}/{self.endpoints['get-env']}"
+        json_data = HttpUtil.safe_request(self.session, url, self.headers, method='GET')
+
+        return json_data['settings']
+
