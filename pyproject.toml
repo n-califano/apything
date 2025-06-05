@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "apything"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   { name="Niccolò Califano", email="niccolo.califano19@gmail.com" },
 ]
